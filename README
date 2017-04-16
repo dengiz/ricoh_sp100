@@ -1,0 +1,53 @@
+A CUPS driver for Ricoh Aficio SP100
+
+## Motivation
+The objective of this project is to build a driver for Ricoh SP100 (and derivatives) to use with CUPS open source printing system that is similar to the original DDST driver supplied by the manufacturer.
+A popular and widely used implementation is available from madlynx (ricoh-sp100) which inspired this project.
+The parameters are obtained by sniffing the communication to the original driver. Raster mode is used instead of Postscript but if there is a reason in favor of PS, it can be implemented as well (I should have a branch from some time ago). 
+
+This driver supports (SP100 ref. original driver)
+- All page sizes (except large sizes that require downscaling through dialog)
+- All paper types
+- 1200 dpi resolution
+- Manual duplexing
+
+
+## Installation
+
+Installation Steps :
+1 - Install required packages
+2 - Install CUPS filter
+3 - Add printer with provided PPD
+
+CUPS Filter installation :
+cmake ./
+make
+sudo make install
+
+Required Libraries
+- cmake
+- libcupsimage2-dev
+- libjbig-dev
+
+Installation of required libraries
+debian : sudo apt-get install cmake libcupsimage2-dev libjbig-dev
+fedora : sudo dnf install cmake cups-libs jbigkit-devel
+
+Add printer to CUPS
+Plug in & turn on the printer
+Using either your OS print settings utility or CUPS web interface (default http://localhost:631)
+Administration -> Add Printer -> Name the printer
+Select your printer from the list -> continue 
+This page will show available configurations, go for provide PPD file option and select the .ppd file under the corresponding project directory 
+Add printer and set default options as you wish
+
+
+## Known Issues
+When printer is in sleep, it might not respond to printing jobs. (Possibly further analysis of USB traces is required).
+When printing odd number of pages in manual duplex mode, last page (without back side) is not processed and stays at the tray.
+
+For different devices with different options, you can modify the .drv file and compile it using ppdc to generate a PPD file.
+The operation is pretty much open loop at this point. If you figure out the protocol for control signaling, settings, etc. please contribute.
+My device does not have a mechanism to keep track of toner, and only counts pages. If this has an impact on your device, you can edit dotcount command.
+If you have any problems, error log should have a few messages to give you an idea.
+I have been using this driver for a year now. 
